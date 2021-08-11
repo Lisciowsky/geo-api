@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ.get("SECRET_KEY", "STRONG_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(environ.get("DEBUG", default=1))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = environ.get("DJANGO_ALLOWED_HOSTS", default="*").split(" ")
 
 
 # Application definition
@@ -80,8 +80,12 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": environ.get("POSTGRES_DB", BASE_DIR / "db.sqlite3"),
+        "USER": environ.get("POSTGRES_USER", "user"),
+        "PASSWORD": environ.get("POSTGRES_PASSWORD", "password"),
+        "HOST": environ.get("DATABASE_HOST", "localhost"),
+        "PORT": environ.get("DATABASE_PORT", "5432"),
     }
 }
 
@@ -123,6 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
